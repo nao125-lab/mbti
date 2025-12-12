@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBTI性格診断テスト</title>
+   <style>
+ /* ========== Cute Pink Mode UI – MBTI Test ========== */
+    :root{
+    --bg: #fef7ff; /* Very Light Pink/Off-White */
+    --bg-accent: #fce7f6; /* Pale Pink Accent */
+    --card: #ffffff; /* White card */
+    --ink: #831843; /* Deep Pink Text */
+    --ink-2: #be185d; /* Medium Pink */
+    --ink-3: #db2777; /* Rose Pink */
+    --brand-1: #ec4899; /* Hot Pink for focus */
+    --brand-2: #f472b6; /* Lighter Pink */
+    --brand-3: #10b981; /* Success Green (contrast) */
+    --border: rgba(236, 72, 153, .2); /* Pink border */
+    --shadow-1: 0 8px 30px rgba(236, 72, 153, .15);
+    --shadow-2: 0 2px 10px rgba(236, 72, 153, .08);
+    --radius-lg: 25px; /* 丸みを強調 */
+    --radius-md: 16px;
+    --radius-sm: 10px;
+    --focus: 0 0 0 4px rgba(236, 72, 153, .4), 0 0 0 1px var(--brand-1);
+    }
+
+    /* 👇 Google Fonts: 丸いフォント（例: Noto Sans JP）を使用しますが、ここではシステムフォントで丸みのあるものを使用 */
+    * { 
+        box-sizing: border-box; 
+        font-family: "BIZ UDPGothic", "Rounded Mplus 1c", "Noto Sans JP", sans-serif; /* 丸いフォントがあれば優先的に指定 */
+    }
+    html, body { height: 100%; }
+
+    body {
+    margin: 0; padding: 24px;
+    color: var(--ink);
+    /* 👇 背景: パステルピンクのグラデーション */
+    background:
+        radial-gradient(1200px 800px at 10% -10%, rgba(251, 113, 133, .15), transparent 40%),
+        radial-gradient(1000px 700px at 110% 10%, rgba(244, 114, 182, .18), transparent 40%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-accent) 100%);
+    background-attachment: fixed;
+    position: relative; 
+    }
+
+    .container {
+    max-width: 880px; margin: 0 auto;
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    padding: 36px 28px;
+    border: 3px solid var(--border); /* ボーダーを少し強調 */
+    box-shadow: var(--shadow-1);
+    }
+
+    h1 {
+    margin: 0 0 22px 0;
+    text-align: center;
+    font-weight: 900;
+    letter-spacing: .5px;
+    color: var(--ink-2);
+    font-size: clamp(1.8rem, 1.4rem + 1.5vw, 2.4rem);
+    text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.5); /* 文字に可愛らしい影 */
+    }
+
+    .progress-bar {
+    position: relative;
+    width: 100%;
+    height: 12px;
+    background: #fbcfe8; /* Lighter pink track */
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+    margin: 10px auto 28px;
+    }
+    .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
+    border-radius: 999px;
+    transition: width .35s ease;
+    }
+
+    .question {
+    margin-bottom: 20px;
+    padding: 20px 20px 18px;
+    background: var(--bg);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-2);
+    transition: transform .15s ease, box-shadow .15s ease, border-color .2s ease;
+    }
+    .question:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(236, 72, 153, .1);
+    border-color: var(--brand-2);
+    }
+
+    .question-number {
+    display: inline-block;
+    font-weight: 700;
+    color: var(--bg);
+    background: var(--brand-1);
+    border: 1px solid var(--brand-2);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: .9rem;
+    margin-bottom: 12px;
+    }
+
+    .question label {
+    display: block;
+    margin-bottom: 16px;
+    font-weight: 600;
+    line-height: 1.6;
+    color: var(--ink-2);
+    }
+
+    .radio-group {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
+    gap: 14px;
+    }
+
+    .radio-option {
+    display: flex; align-items: center; justify-content: center;
+    gap: 10px; padding: 14px 18px;
+    background: #ffe4e6; /* Very light pink option background */
+    border-radius: 999px;
+    border: 2px solid #fbcfe8;
+    cursor: pointer;
+    transition: all .2s ease;
+    user-select: none;
+    color: var(--ink-2);
+    font-weight: 700;
+    }
+    .radio-option:hover { border-color: var(--brand-1); }
+    .radio-option:active { transform: scale(0.98); }
+
+    .radio-option.selected {
+    border-color: var(--brand-1);
+    background: color-mix(in srgb, var(--brand-1) 20%, #ffe4e6); /* Hot pink accent */
+    box-shadow: 0 6px 16px rgba(236, 72, 153, .25);
+    color: var(--ink);
+    transform: scale(1.02);
+    }
+
+    input[type="radio"] {
+    width: 20px; height: 20px;
+    accent-color: var(--brand-1);
+    outline: none;
+    }
+    .radio-option label {
+    margin: 0; font-weight: 700; color: inherit; cursor: pointer;
+    letter-spacing: .2px;
+    }
+
+    .submit-btn {
+    display: block;
+    width: clamp(220px, 50%, 300px);
+    margin: 30px auto 4px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, var(--brand-1) 0%, var(--brand-2) 100%);
+    color: white;
+    border: none;
+    border-radius: 999px; /* 丸みを極端に強調 */
+    font-size: 1.1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease, opacity .2s ease;
+    box-shadow: 0 10px 24px rgba(236, 72, 153, .4);
+    }
+    .submit-btn:hover { transform: translateY(-2px); }
+    .submit-btn:active { transform: translateY(0); box-shadow: 0 6px 16px rgba(236, 72, 153, .3); }
+    .submit-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .result {
+    margin-top: 32px;
+    padding: 30px;
+    background: #f0fdf4; /* Very light green for result background */
+    border-radius: var(--radius-lg);
+    border: 3px solid var(--brand-3);
+    display: none;
+    }
+    .result h2 {
+    color: var(--brand-3);
+    margin: 0 0 16px 0;
+    text-align: center;
+    font-weight: 900;
+    }
+
+    .type-result {
+    font-size: clamp(2.5rem, 1.8rem + 2.5vw, 3.5rem);
+    font-weight: 900;
+    text-align: center;
+    color: var(--brand-1);
+    margin: 20px 0 10px;
+    padding: 20px;
+    background: #fff0f6; /* Super light pink accent */
+    border-radius: var(--radius-lg);
+    box-shadow: 0 6px 18px rgba(236, 72, 153, .15);
+    letter-spacing: 1px;
+    }
+
+    .breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+    }
+    .breakdown-item {
+    background: #fef0f8; /* Light pink background */
+    padding: 20px;
+    border-radius: var(--radius-md);
+    text-align: center;
+    box-shadow: var(--shadow-2);
+    border: 1px solid #fbcfe8;
+    }
+    .breakdown-item h4 {
+    margin: 0 0 10px 0;
+    color: var(--ink-3);
+    font-weight: 800;
+    letter-spacing: .2px;
+    }
+
+    .score { font-size: 1.1rem; font-weight: 700; color: var(--ink-2); }
+
+    /* Focus-visible for keyboard users */
+    .radio-option:focus-within,
+    .submit-btn:focus-visible,
+    .question:focus-within {
+    box-shadow: var(--focus);
+    outline: none;
+    border-color: var(--brand-1);
+    }
+
+    /* 相性画面のスタイル */
+    .compatibility-screen {
+        margin-top: 36px;
+        padding: 32px 28px;
+        border-radius: var(--radius-lg);
+        background: var(--bg-accent);
+        border: 3px solid var(--border);
+        box-shadow: var(--shadow-1);
+        display: none;
+    }
+    .compatibility-card.good {
+        background: #dcfce7; /* Very light green */
+        border-color: var(--brand-3);
+    }
+    .compatibility-card.bad {
+        background: #fef2f2; /* Very light red */
+        border-color: #fca5a5;
+    }
+    .compatibility-card h3 { color: var(--ink-2); }
+    .compatibility-card.good h3 { color: var(--brand-3); }
+    .compatibility-card.bad h3 { color: #f87171; }
+
+
+    .back-btn {
+        width: clamp(180px, 40%, 260px);
+        margin-top: 35px;
+        background: white;
+        color: var(--brand-1);
+        border: 2px solid var(--brand-1);
+        box-shadow: 0 4px 12px rgba(236, 72, 153, .2);
+    }
+    .back-btn:hover { background: #ffe4e6; transform: translateY(-1px); }
+    .back-btn:active { background: var(--card); transform: translateY(0); }
+
+    /* 背景パターン */
+    .mbti-pattern {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        pointer-events: none;
+        opacity: 0.18; /* 透明度を調整 */
+        z-index: -1; 
+    }
+
+    .mbti-pattern span {
+        position: absolute;
+        font-size: 55px; /* サイズを大きく */
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); 
+        transform: rotate(var(--r, 0deg));
+        transition: opacity 1s ease;
+    }
+    
+
+    </style>
+</head>
+
+
+<body>
+    <div class="container">
+        <h1>MBTI性格診断テスト</h1>
+        
+        <div id="quiz-and-result-area">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <form id="mbtiForm">
+                <div class="question">
+                    <div class="question-number">質問 1/20</div>
+                    <label>新しい取り組みに対してすぐに前向きに取り組むことができる</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q7" data-value="N">
+                            <input type="radio" id="q7_yes" name="q7" value="N">
+                            <label for="q7_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q7" data-value="S">
+                            <input type="radio" id="q7_no" name="q7" value="S">
+                            <label for="q7_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 2/20</div>
+                    <label>気持ちよりも理性を優先して判断することが多い</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q14" data-value="T">
+                            <input type="radio" id="q14_yes" name="q14" value="T">
+                            <label for="q14_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q14" data-value="F">
+                            <input type="radio" id="q14_no" name="q14" value="F">
+                            <label for="q14_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 3/20</div>
+                    <label>友人と出かけていても特に一人の時間は必要ではない</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q3" data-value="E">
+                            <input type="radio" id="q3_yes" name="q3" value="E">
+                            <label for="q3_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q3" data-value="I">
+                            <input type="radio" id="q3_no" name="q3" value="I">
+                            <label for="q3_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 4/20</div>
+                    <label>締切日のぎりぎりに始めがちだ</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q18" data-value="P">
+                            <input type="radio" id="q18_yes" name="q18" value="P">
+                            <label for="q18_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q18" data-value="J">
+                            <input type="radio" id="q18_no" name="q18" value="J">
+                            <label for="q18_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 5/20</div>
+                    <label>相手に好印象を与えられるように、さりげない心配りを常に意識してる</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q11" data-value="F">
+                            <input type="radio" id="q11_yes" name="q11" value="F">
+                            <label for="q11_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q11" data-value="T">
+                            <input type="radio" id="q11_no" name="q11" value="T">
+                            <label for="q11_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 6/20</div>
+                    <label>未来よりも今が大事</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q6" data-value="S">
+                            <input type="radio" id="q6_yes" name="q6" value="S">
+                            <label for="q6_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q6" data-value="N">
+                            <input type="radio" id="q6_no" name="q6" value="N">
+                            <label for="q6_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 7/20</div>
+                    <label>カレンダーの予定をできるだけ埋めたい派だ</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q1" data-value="E">
+                            <input type="radio" id="q1_yes" name="q1" value="E">
+                            <label for="q1_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q1" data-value="I">
+                            <input type="radio" id="q1_no" name="q1" value="I">
+                            <label for="q1_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 8/20</div>
+                    <label>予定が突然変えられるとかなりストレスだ</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q16" data-value="J">
+                            <input type="radio" id="q16_yes" name="q16" value="J">
+                            <label for="q16_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q16" data-value="P">
+                            <input type="radio" id="q16_no" name="q16" value="P">
+                            <label for="q16_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 9/20</div>
+                    <label>小さなミスでも、自分の実力不足だとかなり思い落ち込む</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q12" data-value="T">
+                            <input type="radio" id="q12_yes" name="q12" value="T">
+                            <label for="q12_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q12" data-value="F">
+                            <input type="radio" id="q12_no" name="q12" value="F">
+                            <label for="q12_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 10/20</div>
+                    <label>環境の変化には、段階を踏んで馴染んでいくタイプだ</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q5" data-value="I">
+                            <input type="radio" id="q5_yes" name="q5" value="I">
+                            <label for="q5_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q5" data-value="E">
+                            <input type="radio" id="q5_no" name="q5" value="E">
+                            <label for="q5_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 11/20</div>
+                    <label>哲学などの深いテーマを考えるのは得意ではない</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q9" data-value="S">
+                            <input type="radio" id="q9_yes" name="q9" value="S">
+                            <label for="q9_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q9" data-value="N">
+                            <input type="radio" id="q9_no" name="q9" value="N">
+                            <label for="q9_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 12/20</div>
+                    <label>流れが止まったら、とりあえず立て直すことを第一にする</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q20" data-value="J">
+                            <input type="radio" id="q20_yes" name="q20" value="J">
+                            <label for="q20_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q20" data-value="P">
+                            <input type="radio" id="q20_no" name="q20" value="P">
+                            <label for="q20_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 13/20</div>
+                    <label>会話では、つい自分がよく喋ってしまう</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q2" data-value="E">
+                            <input type="radio" id="q2_yes" name="q2" value="E">
+                            <label for="q2_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q2" data-value="I">
+                            <input type="radio" id="q2_no" name="q2" value="I">
+                            <label for="q2_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 14/20</div>
+                    <label>クリエイティブな作品を深堀して考えるより直感で楽しむ方だ</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q15" data-value="F">
+                            <input type="radio" id="q15_yes" name="q15" value="F">
+                            <label for="q15_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q15" data-value="T">
+                            <input type="radio" id="q15_no" name="q15" value="T">
+                            <label for="q15_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 15/20</div>
+                    <label>終わり方を自分なりに解釈できる作品が刺さる</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q8" data-value="N">
+                            <input type="radio" id="q8_yes" name="q8" value="N">
+                            <label for="q8_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q8" data-value="S">
+                            <input type="radio" id="q8_no" name="q8" value="S">
+                            <label for="q8_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 16/20</div>
+                    <label>少し遠くてもノリ優先ですぐに向かいがちだ</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q4" data-value="E">
+                            <input type="radio" id="q4_yes" name="q4" value="E">
+                            <label for="q4_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q4" data-value="I">
+                            <input type="radio" id="q4_no" name="q4" value="I">
+                            <label for="q4_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 17/20</div>
+                    <label>決断力がある方だ</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q19" data-value="J">
+                            <input type="radio" id="q19_yes" name="q19" value="J">
+                            <label for="q19_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q19" data-value="P">
+                            <input type="radio" id="q19_no" name="q19" value="P">
+                            <label for="q19_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 18/20</div>
+                    <label>誰かのために動くことを大切にしている</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q13" data-value="F">
+                            <input type="radio" id="q13_yes" name="q13" value="F">
+                            <label for="q13_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q13" data-value="T">
+                            <input type="radio" id="q13_no" name="q13" value="T">
+                            <label for="q13_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 19/20</div>
+                    <label>理論ばかりの話になると、退屈に感じることがある</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q10" data-value="S">
+                            <input type="radio" id="q10_yes" name="q10" value="S">
+                            <label for="q10_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q10" data-value="N">
+                            <input type="radio" id="q10_no" name="q10" value="N">
+                            <label for="q10_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-number">質問 20/20</div>
+                    <label>予定をたてるときは、細かく日時や場所を事前に決める</label>
+                    <div class="radio-group">
+                        <div class="radio-option" data-name="q17" data-value="J">
+                            <input type="radio" id="q17_yes" name="q17" value="J">
+                            <label for="q17_yes">はい</label>
+                        </div>
+                        <div class="radio-option" data-name="q17" data-value="P">
+                            <input type="radio" id="q17_no" name="q17" value="P">
+                            <label for="q17_no">いいえ</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">診断結果を見る</button>
+            </form>
+            
+            <div id="result" class="result">
+                <h2>あなたのMBTIタイプ</h2>
+                <div id="mbtiType" class="type-result"></div>
+                <div id="breakdown" class="breakdown"></div>
+            </div>
+        </div>
+
+        <div id="compatibility-screen" class="compatibility-screen">
+            </div>
+
+    </div>
+<div id="quiz-and-result-area" style="min-height: 100vh;">
+        </div>
+    
+    <div id="compatibility-screen" class="compatibility-screen" style="display: none;">
+        </div>
+    
+    <div id="mbtiPattern" class="mbti-pattern">
+        </div>
+<script>
+        // 🚨【HTMLへの追加警告】🚨
+        // 背景の可愛い絵文字を表示するには、</body>タグの直前に以下のHTMLが必要です。
+        /* <div id="compatibility-screen" class="compatibility-screen">
+            </div>
+        <div id="mbtiPattern" class="mbti-pattern">
+            </div>
+        */
+
+        // ▼ MBTIごとの写真をまとめて管理する
+        const mbtiImages = {
+
+    ENTP: "https://i.pinimg.com/originals/2d/d8/9a/2dd89a9de127335c06b7aa8506438d8d.png",
+    INTP: "https://i.pinimg.com/originals/f1/55/11/f1551187ec3cddbadd097f60da712d14.png",
+    INTJ: "https://assets.st-note.com/production/uploads/images/168197144/rectangle_large_type_2_6a26fd4d006bc07c6f44dcabce3ff214.png?width=1280",
+    ENTJ: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZs5ETg7-JPZ9ywP8KdjoJ4A2Z3TCu24Jalw&s",
+    ENFJ: "https://seikakumbti.com/wp-content/uploads/enfj-protagonist.png",
+    ENFP: "https://pairs.pink/wp-content/uploads/2023/12/IMG_6361.png",
+    INFP: "https://storage.googleapis.com/neris/public/images/types/infp.png",
+    INFJ: "https://pt.quizur.com/_image?href=https://img.quizur.com/f/img627c800a9fe807.46767337.png?lastEdited=1652326416&w=600&h=600&f=webp",
+    ESTJ: "https://i.pinimg.com/originals/03/67/9e/03679e33c1dfc9cefd29d93f467541df.png",
+    ESFJ: "https://i.pinimg.com/originals/77/3f/8a/773f8ab5786ff5f10fd45c04a9028775.png",
+    ISFJ: "https://64.media.tumblr.com/c1727645302e8c76cb6613e61b1527a4/tumblr_inline_ny5bqwdDNz1teo9yu_500.pnj",
+    ISTJ: "https://seikakumbti.com/wp-content/uploads/istj-logistician-300x300.png",
+    ISFP: "https://i.pinimg.com/originals/21/d3/30/21d330d9cc29526c61546bcd31c5b051.png",
+    ISTP: "https://64.media.tumblr.com/4ef3aced0b3f824209280616837fd4f1/tumblr_inline_ny5jebKNQD1teo9yu_500.pnj",
+    ESTP: "https://i.pinimg.com/originals/16/be/7a/16be7ab27b66f8d34d1574602e616da0.png",
+    ESFP: "https://zionatry.wordpress.com/wp-content/uploads/2018/03/esfp.png",
+
+
+
+    };
+
+        // プログレスバーの更新
+        function updateProgress() {
+            const totalQuestions = 20;
+            const answeredQuestions = document.querySelectorAll('input[type="radio"]:checked').length;
+            const progress = (answeredQuestions / totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+
+        document.addEventListener('change', (e) => { if (e.target.matches('input[type="radio"]')) { updateProgress(); updateRadioAppearance(); }});
+
+
+        // ラジオボタンの見た目を更新
+        function updateRadioAppearance() {
+            document.querySelectorAll('.radio-option').forEach(option => {
+                const radio = option.querySelector('input[type="radio"]');
+                if (radio.checked) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+        }
+
+        // ラジオボタンのクリックイベント
+        document.querySelectorAll('.radio-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                
+                // 同じ名前のラジオボタンの見た目を更新
+                const name = radio.name;
+                document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+                    r.closest('.radio-option').classList.remove('selected');
+                });
+                this.classList.add('selected');
+                
+                updateProgress();
+            });
+        });
+
+        
+        document.addEventListener('DOMContentLoaded', () => { updateProgress(); updateRadioAppearance(); });
+
+    
+        // 質問と分類の対応表
+        const questionMapping = {
+            // EI分類
+            'q1': 'EI', 'q2': 'EI', 'q3': 'EI', 'q4': 'EI', 'q5': 'EI',
+            // NS分類
+            'q6': 'NS', 'q7': 'NS', 'q8': 'NS', 'q9': 'NS', 'q10': 'NS',
+            // FT分類
+            'q11': 'FT', 'q12': 'FT', 'q13': 'FT', 'q14': 'FT', 'q15': 'FT',
+            // JP分類
+            'q16': 'JP', 'q17': 'JP', 'q18': 'JP', 'q19': 'JP', 'q20': 'JP'
+        };
+
+        // ▼ 【修正】MBTIタイプごとの名前、説明、そしてキャラクター情報（作品別）
+        // ※画像URLはプレースホルダーに修正しました。ご自身で用意したURLに置き換えてください。
+        const mbtiDescriptions = {
+            // アナリスト (NT)
+            INTJ: { name: "建築家", description: "すべてを計画通りに進める、知識欲旺盛な戦略家。知的好奇心と独立心が強く、独自の視点で世界を分析します。", 
+                characters: {
+                    OP: { charName: "トラファルガー・ロー", charImage: "https://i.pinimg.com/736x/cb/07/ea/cb07ea7b182d1eb675340c7de16175de.jpg" },
+                    CN: { charName: "ジン", charImage: "https://s.animeanime.jp/imgs/p/64XVvff3mD9cFhi_PU1_DqGg_6ytrq_oqaqr/586317.jpg?zoom=spacing"},
+                    JB: { charName: "ムスカ", charImage: "https://s.animeanime.jp/imgs/p/64XVvff3mD9cFhi_PU1_DqGg_6ytrq_oqaqr/513997.jpg?zoom=spacing" },
+                    DM: { charName: "ギルモア", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRox6iNdTEbuF9Q571qUjRKIYCVzSbDOysMIW-9TA2fgKqUDAAi7ajhXRx53BoB0ywea6A&usqp=CAU" }
+                }
+            },
+            INTP: { name: "論理学者", description: "知識の探求を愛する、静かな思想家。複雑な理論を理解し、完璧な解決策を見つけ出すことに喜びを感じます。", 
+                characters: {
+                    OP: { charName: "ニコ・ロビン", charImage: "https://i.redd.it/hs3kzu4jbypc1.png" },
+                    CN: { charName: "コナン", charImage: "https://www.ytv.co.jp/conan/character/conan/images/btn.png" },
+                    JB: { charName: "堀越二郎", charImage: "https://realsound.jp/wp-content/uploads/2021/07/0716_friday_kazetachinu-332x468.jpg" },
+                    DM: { charName: "ジャイ子", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuq4CQxxzfLIwqIkPzw421Kxw5TdpQmcEoVQ&s" }
+                }
+            },
+            ENTJ: { name: "指揮官", description: "生まれながらのリーダー。目標達成のためなら困難を恐れず、効率的に組織を動かすカリスマ性を持っています。", 
+                characters: {
+                    OP: { charName: "ボア・ハンコック", charImage: "https://i.pinimg.com/originals/3e/47/58/3e4758941c2717e72b91ee6c88ed1055.jpg" },
+                    CN: { charName: "安室透", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUVzm5FN1Tj52ewgl9t_qbAxyiC-bPfzO55Q&s" },
+                    JB: { charName: "クシャナ", charImage: "https://i.pinimg.com/236x/46/f0/d9/46f0d9901f5f97274f7bb4716ca8baa3.jpg" },
+                    DM: { charName: "パワえもん", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuRcuhW1zD7HlLYTLvcSoPIF-XV2lwlfXoByQ3MOv4pU1y5mJTZdXR81LMkBQ8k9V8yVU&usqp=CAU" }
+                }
+            },
+            ENTP: { name: "討論者", description: "頭の回転が速い、知的な挑戦者。既存のルールに疑問を投げかけ、新しいアイデアや議論を巻き起こすことを得意とします。", 
+                characters: {
+                    OP: { charName: "ウソップ", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxS60haRo70FA0uOUD6TagLhSlRCe8D7d3WQ&s" },
+                    CN: { charName: "怪盗キッド", charImage: "https://pbs.twimg.com/media/D2_YVMVU0AEqeGw.jpg" },
+                    JB: { charName: "カルシファー", charImage: "https://i.pinimg.com/474x/83/aa/85/83aa85f1482729f96d008c9a85c03d76.jpg" }, 
+                    DM: { charName: "骨川スネ夫", charImage: "https://assets.st-note.com/img/1746231750-uJvQWi9RbNE7Lfm5tl3cOYXh.png?width=1200" }
+                }
+            },
+
+            // 外交官 (NF)
+            INFJ: { name: "提唱者", description: "静かに人々を導く、理想主義的な夢想家。強い信念と共感力を持ち、世界をより良くするために尽力します。", 
+                characters: {
+                    OP: { charName: "イッショウ", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvF3RCYZ4BSJjJ8lAZz6EVutCq_-Iq5QQQdw&s" },
+                    CN: { charName: "エレーナ", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2d7_yzBIzJDxLEZgMc62nQ00sPp3SXKOIkQ&s" },
+                    JB: { charName: "ハク", charImage: "https://magmix.jp/wp-content/uploads/2023/12/231227-HAKUSAMA-01.jpg" },
+                    DM: { charName: "のび太のおばあちゃん", charImage: "https://assets.st-note.com/production/uploads/images/11829081/rectangle_large_type_2_515db31c41413c8a947e618ca8ef030b.jpeg?width=1280" }
+                }
+            },
+            INFP: { name: "仲介者", description: "優しさと深い内面を持つ、真の理想主義者。自分の価値観に忠実で、創造的な表現を通じて世界とつながろうとします。", 
+                characters: {
+                    OP: { charName: "ドンキホーテ・ロシナンテ", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeziZ0mdDaQ_UC2mZWwdLcGyjwoY6jeXzfTw&s" },
+                    CN: { charName: "高木刑事", charImage: "https://renote.net/files/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MTM0ODUyLCJwdXIiOiJibG9iX2lkIn19--9aede456b01e76eb247c49084ae0e59b3f0bd4ba/D_ZqAiBUIAMkEpe.jpg" },
+                    JB: { charName: "アンナ", charImage: "https://www.crank-in.net/img/db/237011137118137_650.jpg" },
+                    DM: { charName: "のび太", charImage: "https://m.media-amazon.com/images/S/pv-target-images/ce25990f75df77cb6742af3212a7a132e01d056f496177c6f899b7a1503a6dbb._SY960_CR250,0,540,960_SY854_CR0,50,480,800_.jpg" }
+                }
+            },
+            ENFJ: { name: "主人公", description: "明るく情熱的で、人を魅了する指導者。他人の才能を引き出し、コミュニティ全体を向上させる力を持っています。", 
+                characters: {
+                    OP: { charName: "シャンクス", charImage: "https://lp.p.pia.jp/shared/materials/24c8eb37-03e5-4007-bc4c-8b8df56fb12e/origin.jpg" },
+                    CN: { charName: "大岡紅葉", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4T3GkiFC6b3T0JZePbVXOVPXcs1jWGPY2aA&s" },
+                    JB: { charName: "マーニー", charImage: "https://www.ghibli.jp/gallery/marnie016.jpg" },
+                    DM: { charName: "ドラミちゃん", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUnypPT9Z3QMokB_8qNVFDMuAU0grFwVmycg&s" }
+                }
+            },
+            ENFP: { name: "広報運動家", description: "自由奔放で創造性に溢れる、活発なムードメーカー。人との出会いや新しい可能性を探ることを心から楽しみます。", 
+                characters: {
+                    OP: { charName: "ヤマト", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjL28aSchmMZyqMcRbbVfXoeqy9NU4HIDgRA&s" },
+                    CN: { charName: "黒羽海斗", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfoptjTpaPkGn6qiOHVm85W5PhShk5nCpSdw&s" },
+                    JB: { charName: "ハウル", charImage: "https://eigahitottobi.com/wp-content/uploads/2019/06/DkPS7ThVAAAy36k-1024x576.jpg" },
+                    DM: { charName: "ミュー", charImage: "https://doraeiga.com/eximages/2020/character/chara_myu2.png" }
+                }
+            },
+
+            // 守護者 (SJ)
+            ISTJ: { name: "管理者", description: "事実と論理を重んじる、責任感の強い実務家。伝統と秩序を大切にし、計画通りに確実に物事を実行します。", 
+                characters: {
+                    OP: { charName: "ジンベイ", charImage: "https://i.redd.it/a3joloqs132e1.jpeg" },
+                    CN: { charName: "風見裕也", charImage: "https://conan-kuromaku.info/wp-content/uploads/2018/12/IMG_20181214_200307-320x180.jpg" },
+                    JB: { charName: "サン", charImage: "https://contents.oricon.co.jp/upimg/news/20210816/2203409_202108160008739001629074863e.jpg" },
+                    DM: { charName: "出木杉君", charName: "https://stat.ameba.jp/user_images/20200323/11/hiroko2016kandora/14/7c/p/o0390045414732505827.png?caw=800" }
+                }
+            },
+            ISFJ: { name: "擁護者", description: "温かく献身的で、縁の下の力持ち。他人への配慮を最優先し、細やかなサポートで周囲に安心感を与えます。", 
+                characters: {
+                    OP: { charName: "コビー", charImage: "https://i.pinimg.com/236x/b7/cc/a9/b7cca9e22471253d1f399c92ea325112.jpg" },
+                    CN: { charName: "諸伏景光", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPdBAtkEZh_vkwWpJV_ibXi54BUTmUL8b4Cg&s" },
+                    JB: { charName: "ソフィー", charImage: "https://c02.castel.jp/800x/0/commentary-on-howl-from-howls-moving-castle-j108099.jpg?mod=20230217181151" },
+                    DM: { charName: "しずかちゃん", charImage: "https://pbs.twimg.com/profile_images/637679586285776896/0A5H_-sA_400x400.jpg" }
+                }
+            },
+            ESTJ: { name: "幹部", description: "組織を統率し、ルールを守る現実的な管理者。物事を効率的に処理し、目標達成に向けて積極的に行動します。", 
+                characters: {
+                    OP: { charName: "ナミ", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShfWMse8N2dXWNcPqi4w6jONQh5nWJ-oHBeQ&s" },
+                    CN: { charName: "ベルモット", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzWTMa2qi0tjx-1BpIb5zBDJmTCf4rpRTrGQ&s" },
+                    JB: { charName: "湯婆婆", charImage: "https://media.trilltrill.jp/articles/3782500/thumbnail-image.7cb4691e960c733af5983134cf7759ea?w=1200" },
+                    DM: { charName: "先生", charImage: "https://otakotaku.com/asset/img/character/2018/10/sensei-5bd196974fdfdp.jpg" }
+                }
+            },
+            ESFJ: { name: "領事官", description: "社交的で人気があり、コミュニティの調和を保つ人。他人を助けることに喜びを感じ、場の雰囲気を明るくします。", 
+                characters: {
+                    OP: { charName: "ビビ", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6X4cqZcWWOBh6ck1nicX7le-U-1PQT-fRsg&s" },
+                    CN: { charName: "毛利蘭", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5hH871UITW5F3VInZwt9Pmx7gJvu0nQSAEQ&s" },
+                    JB: { charName: "サツキ", charImage: "https://www.nishinippon.co.jp/uploads/image/88003/sns_6c9fc7b120.jpg" },
+                    DM: { charName: "ドラえもん", charImage: "https://irasutoya.jp/wp-content/uploads/2020/06/nesoberu-doraemon-no-irasuto.png" }
+                }
+            },
+
+            // 探検家 (SP)
+            ISTP: { name: "巨匠", description: "冷静沈着で、実用的で器用な職人。機械や道具を扱い、自らの手で問題を解決することを好みます。", 
+                characters: {
+                    OP: { charName: "ロロノア・ゾロ", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvfMrrFsW187uXqjHcldHe4-1RUoxzd45_DA&s" },
+                    CN: { charName: "赤井秀一", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvdmaYeenk74RtduKBFvoA2TXeMJ_eBxuBnQ&s" },
+                    JB: { charName: "ポルコ・ロッソ", charImage: "https://i.pinimg.com/736x/bd/97/70/bd9770fb75cc5c0e48980396941bdfcb.jpg" },
+                    DM: { charName: "セワシ", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNzcZBOdhY_0zAxEPc1X2ALU4NqBv0ZH9jaA&s" }
+                }
+            },
+            ISFP: { name: "冒険家", description: "芸術的な感性と好奇心を持つ、自由な魂。今この瞬間を大切にし、美しいものや体験を求めます。", 
+                characters: {
+                    OP: { charName: "チョッパー", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRt7JCSpCVJYieNIpT46FvZqZX3nZSMqT1UWw&s" },
+                    CN: { charName: "京極誠", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCVPpp11pQS6CvHFOW5nxxlgWpzxfI2wiDAQ&s" },
+                    JB: { charName: "千尋", charImage: "https://media.eiga.com/images/buzz/93791/9ac7c77ab3159483/640.jpg" },
+                    DM: { charName: "のび太の父", charImage: "https://pbs.twimg.com/media/FG-DZzHaQAEJimk.jpg" }
+                }
+            },
+            ESTP: { name: "起業家", description: "エネルギッシュで行動力があり、危険を恐れない挑戦者。現場での経験を重視し、状況への素早い対応が得意です。", 
+                characters: {
+                    OP: { charName: "ボートガス・D・エース", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlI9P4eOLeIniB3MDZWguosbdo7310RKBEzA&s" },
+                    CN: { charName: "服部平次", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsG4kKPZ0VKcBdlYKAOQpzak3n7MqgJh4IhA&s" },
+                    JB: { charName: "ドーラ", charImage: "https://img.buzzfeed.com/buzzfeed-static/static/2024-08/28/9/asset/840ef746647a/sub-buzz-3110-1724836018-1.jpg?resize=990:535" },
+                    DM: { charName: "ジャイアン", charImage: "https://prcdn.freetls.fastly.net/release_image/19470/2470/19470-2470-a2c720c8aa2d6605730495553422cc67-944x1275.jpg?format=jpeg&auto=webp&quality=85%2C65&width=1950&height=1350&fit=bounds" }
+                }
+            },
+            ESFP: { name: "エンターテイナー", description: "注目を集めるのが得意な、陽気なパフォーマー。楽しむことを最優先し、周りの人々を巻き込んで場を盛り上げます。", 
+                characters: {
+                    OP: { charName: "ルフィー", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJeAvPjIPeKioxwpQ6T9E5o8svGB7csWaEtQ&s" },
+                    CN: { charName: "鈴木園子", charImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTefuVliMEzHNP1-2fwUBRb12eLVSAGglHGJA&s" },
+                    JB: { charName: "キキ", charImage: "https://img.huffingtonpost.com/asset/65fd131a2300001b00550c24.jpg?cache=juTggw70As&ops=1200_630" },
+                    DM: { charName: "のび太の母", charImage: "https://stat.ameba.jp/user_images/20161216/19/buhihin55/9c/5b/j/o0340046013822702238.jpg" }
+                }
+            }
+        };
+
+
+        document.getElementById('mbtiForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 全ての質問に回答されているかチェック
+            const questions = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10', 
+                             'q11', 'q12', 'q13', 'q14', 'q15', 'q16', 'q17', 'q18', 'q19', 'q20'];
+            
+            for (let q of questions) {
+                if (!document.querySelector(`input[name="${q}"]:checked`)) {
+                    alert('すべての質問にお答えください。');
+                    return;
+                }
+            }
+            
+            // ✅【修正点１】MBTIタイプを決定するための集計ロジックを復元
+            const categories = {
+                'EI': { E: 0, I: 0 },
+                'NS': { N: 0, S: 0 },
+                'FT': { F: 0, T: 0 },
+                'JP': { J: 0, P: 0 }
+            };
+            
+            // 各質問の回答を集計
+            questions.forEach(q => {
+                const answer = document.querySelector(`input[name="${q}"]:checked`).value;
+                const category = questionMapping[q];
+                categories[category][answer]++;
+            });
+            
+            // MBTIタイプを決定（3項目以上で決定）
+            let mbtiType = '';
+            mbtiType += categories.EI.E >= 3 ? 'E' : 'I';
+            mbtiType += categories.NS.N >= 3 ? 'N' : 'S';
+            mbtiType += categories.FT.F >= 3 ? 'F' : 'T';
+            mbtiType += categories.JP.J >= 3 ? 'J' : 'P';
+            // mbtiType = "INFP"; // ❌ ハードコードを削除
+            
+            // 結果タイプの説明データを取得
+            const descriptionData = mbtiDescriptions[mbtiType] || { name: "不明なタイプ", description: "このタイプの詳細情報はありません。" };
+
+            // 結果を表示
+            document.getElementById('mbtiType').textContent = `${mbtiType}（${descriptionData.name}）`;
+            
+            // 説明文のみを表示する
+            const breakdown = document.getElementById('breakdown');
+            breakdown.innerHTML = `
+                
+                <div style="background: var(--bg); padding: 25px; border-radius: var(--radius-md); border: 1px solid #fbcfe8; box-shadow: var(--shadow-2);">
+                    <p style="margin: 0; line-height: 1.9; color: var(--ink-2); font-size: 1.25rem; font-weight: 500;">
+                        ${descriptionData.description}
+                    </p>
+
+                  
+                    <img src="${mbtiImages[mbtiType]}" 
+                         alt="${mbtiType} image"
+                         style="width: 100%; max-width: 380px; display:block; margin:30px auto; border-radius:16px;">
+     
+                </div>
+            `;
+            
+            // 結果エリアを表示
+            document.getElementById('result').style.display = 'block';
+
+            // 相性とキャラクターのボタンを両方表示する
+            const resultElement = document.getElementById('result');
+            let btnContainer = resultElement.querySelector('#options-btn-container');
+
+            if (!btnContainer) {
+              btnContainer = document.createElement('div');
+              btnContainer.id = 'options-btn-container';
+              btnContainer.style.textAlign = 'center';
+              btnContainer.style.marginTop = '25px';
+              btnContainer.innerHTML = `
+                <p style="color: var(--ink-2); margin-bottom: 12px; font-weight: 600;">結果をさらに深く見てみますか？</p>
+                <div style="display: flex; justify-content: center; gap: 15px;">
+                    <button id="seeCompatibilityBtn" class="submit-btn back-btn" style="width: 48%; margin: 0; background: #ffe4e6; color: var(--brand-1); border: 2px solid var(--brand-1);" type="button">
+                      相性を見てみる
+                    </button>
+                    <button id="seeCharacterBtn" class="submit-btn" style="width: 48%; margin: 0; padding: 16px 10px;" type="button">
+                      同じMBTIのキャラクターを見てみる
+                    </button>
+                </div>
+              `;
+              resultElement.appendChild(btnContainer);
+              
+              // ボタンクリック時のイベントリスナーを設定
+              document.getElementById('seeCompatibilityBtn').addEventListener('click', () => {
+                document.getElementById('quiz-and-result-area').style.display = 'none';
+                showCompatibilityScreen(mbtiType);
+              });
+              document.getElementById('seeCharacterBtn').addEventListener('click', () => {
+                document.getElementById('quiz-and-result-area').style.display = 'none';
+                // ✅【修正点２】未定義だった関数を呼び出す
+                showCharacterSelectionScreen(mbtiType); 
+              });
+            }
+
+            
+            // 結果エリアまでスクロール
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        });
+
+
+    
+        // ▼ MBTIごとの相性データ（前回の修正済みデータを維持）
+        const mbtiCompatibility = {
+          INFP: { 
+            Good: { types: ["ESTP"], reason: "ESTP（起業家）は非常に行動力が高く、INFP（仲介者）の良き理解者である上に、その行動力を元にサポート出来ます。また、INFP（仲介者）をただサポートするだけではなく、そのクリエイティブさを認め、尊敬することができるため、非常に相性が良いです。" },
+            Bad: { types: ["ESTJ"], reason: "ESTJ（幹部）は、名前のようにモノや人を管理することが得意であり、組織を組織を引っ張ていくようなリーダー気質を持っています。一方で、ルールを守らない人に対しては厳しくなる傾向もあるため、INFP（仲介者）とは合わないでしょう。" }
+          },
+          ENFP: { 
+            Good: { types: ["ISTP"], reason: "ENFP（運動家）は圧倒的なコミュニケーション能力を持つため、周囲の人との関係性の構築が得意という反面、細かな作業が苦手といった一面があります。その一方で、ISTP（巨匠）はとにかく細かい作業が得意ですが、人とコミュニケーションを取ることは苦手な傾向があります。これらのように、お互いの得意分野が異なっているため、お互いに手を取り合うことで最適な関係を築くことができます。この組み合わせでは新しい経験や活動において共通の興味を見つけ、お互いの視点から学び合うこともでき、またお互い根底で考えている価値観の相性がとても良いです。" },
+            Bad: { types: ["ISTJ"], reason: "ISTJ(管理者)は現実的で計画的な性格を持ち、規則や秩序を重視します。この点で、自由奔放で直感的なENFP（運動家）とは対照的です。ISTJ（管理者）とENFP（運動家）は根底の性格が全て真逆であるため、非常に相性が良くないです。物事に対する考え方全てにおいて捉え方が正反対であり、お互いに認め合うことができず、最悪の相性とすら言えるでしょう。特にISTJ（管理者）は現存するルールや仕組みが新しいものに替わることを極端に嫌がる性格タイプです。一方で、ENFP（運動家）は新しいチャレンジに興味があるため、もしENFP（運動家）が新しいチャレンジをしようと誘っても、高い確率で反対されてしまうでしょう。" }
+          },
+          INFJ: { 
+            Good: { types: ["ESTJ"], reason: "ESTJは、今自分に課されているミッションを実現することに力を使える人ではありますが、まだ存在していない目標を作り出すことは苦手です。一方、INFJは未来のあるべき姿を考えることに長けている性格ですので、ESTJが向かうべき道筋照らすことができるでしょう。このように、お互いが強みを切り分けて活かせる関係性であることから、友人関係や恋愛関係だけでなく、仕事においても非常に良い相性と言えます。無理せず自然体で付き合っていくこともでき、長期的に良いパートナーとしてお互いかけがえのない存在と認識するはずです" },
+            Bad: { types: ["ESTP"], reason: "今のことしか考えないだけでなく、リスクをとってまで新しいことにチャレンジしようとするESTPに対して、INFJは危なっかしくできるだけ関わりたくないとすら感じることでしょう。また、INFJはじっくりと考えた上で行動をしたいと考える性格に対し、ESTPはとにかく直感を信じて行動にすぐ移す傾向にありますので、お互いがお互いを目の上のたんこぶのように嫌な存在だと感じることもあります。" }
+          },
+          ENFJ: { 
+            Good: { types: ["ISTJ"], reason: "ENFJ(主人公)の理想主義や感情的サポート力と、ISTJ(管理者)の安定性や責任感が補完的な関係を築くことができるため、相性がとても良いです。" },
+            Bad: { types: ["ISTP"], reason: "ISTP(巨匠)の無計画さや自由を求める性質が、ENFJ(主人公)の綿密な計画やコミットメントを求める傾向と衝突することがあります。よって、関係性の中でお互いの価値観の違いが目立ちやすいです。" }
+          },
+          INTP: { 
+            Good: { types: ["ESFP"], reason: "ESFP（エンターテイナー）の明るく社交的な性格は、内向的なINTP（論理学者）に活気や楽しさをもたらします。一方、INTP（論理学者）は独創的なアイデアや論理的な思考はESFP（エンターテイナー）に知的な刺激や新しい視点を提供します。また、好奇心旺盛なESFP（エンターテイナー）がINTP（論理学者）のアイデアに興味を示すことで、INTP（論理学者）の反応がモチベーションが高まるという良い相乗効果があります。" },
+            Bad: { types: ["ESFJ"], reason: "ESFJ（領事官）は感情的な調和や他人への配慮を重視しますが、INTP（論理学者）は論理的な判断を優先し、感情面にあまり関心を持ちません。この違いが大きな溝を生む可能性があります。特に、ESFJ（領事官）が感情的なフィードバックを求める一方、INTP（論理学者）は冷静で直接的な表現を好むため、不満や誤解が生じやすいです。" }
+          },
+          ENTJ: { 
+            Good: { types: ["ISFJ"], reason: "ISFJ（擁護者）は、高い献身性を持っており、人をサポートする能力に長けています。そのため、ENTJ（指揮官）のリーダーシップとの相性が非常に良く、相乗効果を発揮します。またISFJ（擁護者）は真面目で誠実なので、同様に誠実で正義感のああるENTJ（指揮官）と強い信頼関係を築けるでしょう。" },
+            Bad: { types: ["ISFP"], reason: "ISFP（冒険家）はセンスや柔軟性に優れています。スケジュールや計画に従って行動することを嫌い、日々マイペースに生活しています。ENTJ（指揮官）にとって、自由人過ぎるISFP（冒険家）の行動は理解し難く、組織の秩序を乱す存在だと感じてしまうかもしれません。" }
+          },
+          ISTJ: {
+            Good: { types: ["ENFJ"], reason: "ENFJ（主人公）のカリスマ性や社交的な性格はISTJ（管理者）の持つ堅実な特性とバランスを取りながら、互いの目標をより高い次元で達成する手助けをします。また、ENFJ（主人公）がISTJ（管理者）に対して新たな視点や人間関係における柔軟性を提供します。一方でISTJ（管理者）はENFJ（主人公）の広い視点でのビジョンを具体化するための実務的なサポートをするので、互いに欠けている部分を補い合い、充実した協力関係を築くことが可能です。" },
+            Bad: { types: ["ENFP"], reason: "ENFP（広報運動家）は新しいアイデアを追求し、柔軟に行動することを好みます。一方で、ISTJ（管理者）の秩序を重んじる性格とは対照的なため、価値観や行動スタイルの違いから衝突が生じることがあります。特に、ENFP（広報運動家）が直感や感情に基づいて行動し、詳細な計画を省略する傾向は、ISTJ（管理者）にとってストレスとなる場合があります。" }
+          },
+          ISFJ: {
+            Good: { types: ["ENTJ"], reason: "内向的で穏やかなISFJ（擁護者）と、外交的で皆を引っ張っていくENTJ（指揮官）とは、一見正反対の性格のように思えますが、ISFJ（擁護者）の献身とENTJ（指揮官）のリーダーシップが補完し合い、互いを助け合える良好な関係になるでしょう。また、誠実さや粘り強さという部分で共通しているため、強い信頼関係ができます。" },
+            Bad: { types: ["ENTP"], reason: "ENTP（討論者）は非常に頭が切れ、他人との討論が得意という特徴があります。しかし、ENTP（討論者）が理詰めで論破しようとしてくるため、心優しく内向的なISFJ（擁護者）は意見をすることができません。特に一緒に何かしらの物事を進めるような場合、ISFJ（擁護者）は一方的に抑圧されたような感覚を味わい、強いストレスを感じてしまうでしょう。" }
+          },
+          INTJ: { 
+            Good: { types: ["ESFJ"], reason: "ESFJ（領事）の社交的で感情を重視する性格と、INTJ（建築家）の論理的で計画的な性格を理解することで、お互いの性格を補完し合うことができます。どちらも知識欲が高いため、お互いに高め合っていける関係を築くことができるでしょう。" },
+            Bad: { types: ["ESFP"], reason: "ESFP（エンターテイナー）は、自分の興味のある物事にしか真剣に向き合おうとしないといった自我の強さがあるため、INTJ（建築家）とは相性が悪いです。また、ESFP（エンターテイナー）は直感と感情に頼りがちですが、INTJ（建築家）は論理的かつ系統的な解決法を好むため、話し合いなどで衝突が起こりやすいです。" }
+          },
+          ESTJ: { 
+            Good: { types: ["ISTJ"], reason: "ISTJ（管理者）とESTJ（幹部）には数多くの共通点があり、どちらも責任感が強く、実務的で計画をしっかり立てて物事を進めます。そのため、一緒にいると、自然と協力し合い、安定した関係が築けます。" },
+            Bad: { types: ["INFP"], reason: "INFP（仲介者）は自分の理想を大切にし、その実現のための行動力に優れるという特徴があります。しかし、INFP（仲介者）の目標は理想主義的であるため、合理的で現実的なESTJ（幹部）は納得できません。特に一緒に何かしらの物事を進めるような場合、ESTJ（幹部）は自分の計画通りに進められないもどかしさを味わい、強いストレスを感じてしまいます。" }
+          },
+          ESFJ: { 
+            Good: { types: ["INTJ"], reason: "INTJ（建築家）は高い行動力に加えて、想像力や戦略性にも優れています。一方、ESFJ（領事官）は行動力がある反面、直感的に動いてしまうことが多く、慎重さが不足しがちです。そのため、INTJ の戦略的で冷静な視点が ESFJ の良きブレーキとなり、バランスが取れた関係を築きやすいです。" },
+            Bad: { types: ["INTP"], reason: "INTP（論理学者） は、自分の気なるものには熱中できるタイプだが、コミュニケーションをとること自体に苦手意識を感じており、また他人にも基本的に興味を持っていません。アルファベットも１文字も共通していないこともあり、積極的に話しかけてくるESFJ（領事官）とは全く相性が合わないです。" }
+          },
+          ISTP: { 
+            Good: { types: ["ENFP"], reason: "ISTP（巨匠）とENFP（広報運動家）は性格が大きく異なりますが、その違いが良い相互作用を生む組み合わせです。ENFP（広報運動家）の社交的でエネルギッシュな性格は、ISTP（巨匠）のクールで落ち着いた一面とバランスを取り、ISTPに新しい刺激を与えます。また、ISTPの実践的なスキルと合理的な考え方が、ENFPのアイデアを実現するのに役立つため、協力的な関係を築きやすいでしょう。" },
+            Bad: { types: ["ENFJ"], reason: "ENFJ（主人公）は、人間関係を大切にし、周囲の人を引っ張るカリスマ的な存在です。しかし、そのENFJ（主人公）の積極的な社交性や感情的なアプローチが、ISTP（巨匠）の冷静で内向的な性格には合わないことがあります。ENFJ（主人公）の熱意がISTP（巨匠）には過干渉に映りやすく、ISTP（巨匠）が独立性を求めるあまり関係性に距離を置くことで、誤解や摩擦が生じやすいです。" }
+          },
+          ESTP: { 
+            Good: { types: ["INFP"], reason: "内向的なINFP（仲介者）と外向的なESTP（起業家）は、一見相性が悪いように思えるかもしれません。しかしINFP（仲介者）の理想主義とESTP（起業家）の現実主義は、異なる視点をもたらし、互いに学び合う機会を提供することができます。互いの性格の違いを乗り越えることができれば、非常に相性が良く、相補的な関係性を築けるでしょう。" },
+            Bad: { types: ["INFJ"], reason: "INFJ（提唱者）は、物静かに自分の理想を掲げるような性格です。黙々と自分一人で思考を繰り広げていくことが好きで、他人とのコミュニケーションはあまり積極的ではありません。現実主義なESTP（起業家）は、INFJ（提唱者）の理想主義的な考えに理解を示せないことが多いようです。MBTIの4つの要素がすべて反対なこともあり、価値観の違いからなかなか良い関係性は築けないと言えるでしょう。" }
+          },
+          ISFP: { 
+            Good: { types: ["ENTP"], reason: "お互いに高い知的好奇心を持っているだけでなく、感性やセンスを重視する傾向にあることから、適切に助け合うことで仲を深めていけるでしょう。考え方がほぼほぼ同じで、得意分野が若干異なるという関係性でもありますので、友人関係でも恋愛関係でも上司部下の関係であっても、常にお互いが学び合うことができます。相手の長所を尊敬することができ、衝突も少なく順風満帆に関係性を構築できるのも特徴です。" },
+            Bad: { types: ["ENTJ"], reason: "ENTJ（指揮官）は支配的で目標志向な性格のため、ISFP（冒険家）の自由で柔軟な態度とは根本的に相容れない部分があります。ENTJ（指揮官）は計画的で結果を求める性格ですが、ISFP（冒険家）はその場の感情や雰囲気を重視するため、ENTJ（指揮官）のペースに合わせるのが難しいと感じることが多いです。また、ENTJ（指揮官）は直接的なコミュニケーションを好みますが、ISFP（冒険家）は対立を避ける傾向があるため、誤解や感情のすれ違いが生じやすいです。" }
+          },
+          ESFP: { 
+            Good: { types: ["INTP"], reason: "明るく社交的なESFP（エンターテイナー）と、内向的で理論的なINTP（論理学者）は、一見正反対の性格のように思えます。しかし、ESFP（エンターテイナー）のエネルギーと行動力が、INTP（論理学者）の独創的な発想を形にする助けとなり、互いを補い合える良好な関係を築くことができます。また、柔軟性や新しい視点を共有できるという部分で共通しているため、強い信頼関係で結ばれるでしょう。" },
+            Bad: { types: ["ISTP"], reason: "ESFPとISTPはどちらも、今この瞬間を大切にする性格ということもあり、最初のうちはシンパシーを感じて相性が良いと思いやすいです。しかし、内向型と外向型の違いや物事の判断基準の違いなどの価値観の相違から衝突することが多々あります。加えて、ISTPは自分の判断に自信やプライドを持っている性格ですので、柔軟性を大切にしたいと考えるESFPとは根本的に相性が悪いと言えます。衝突した後の関係性の修復にも時間がかかりますので、仕事や恋愛でもあまり良い組み合わせとは言えません。" }
+          },
+          ENTP: { 
+    　　　　 Good: { types: ["ISFP"], reason: "ENTPの尽きない好奇心と革新的なアイデアを、INFJの深い洞察力やINTJの戦略的な思考が理解し、実現に向けて高め合える関係です。" },
+            Bad: { types: ["ISFJ"], reason: "ENTPの議論好きでルールに縛られない姿勢が、調和と伝統を重んじるISFJ/ESFJと衝突しやすく、感情的な溝ができやすい傾向があります。" }
+            
+        } 
+        }; // mbtiCompatibilityオブジェクトの終わり
+
+
+        
+        // ▼ 相性を表示する関数（画面切り替え）
+        function showCompatibilityScreen(mbtiType) {
+            const quizArea = document.getElementById('quiz-and-result-area');
+            const compScreen = document.getElementById('compatibility-screen');
+            const typeData = mbtiCompatibility[mbtiType] || { 
+                Good: { types: ["-"], reason: "このタイプの相性データは現在準備中です。" },
+                Bad: { types: ["-"], reason: "このタイプの相性データは現在準備中です。" }
+            };
+            
+
+
+
+            compScreen.innerHTML = `
+                <h2>${mbtiType}タイプと相性</h2>
+
+                <img src="${mbtiImages[mbtiType]}" 
+                     alt="${mbtiType} image"
+                     style="width: 80%; max-width: 320px; display: block; margin: 15px auto; border-radius: 12px;">
+
+                <p style="text-align: center; color: var(--ink-2); margin-bottom: 30px;">
+                    ※この相性診断は一般的な傾向に基づいた参考データです。
+                </p>
+                <div class="compatibility-grid">
+                    
+                    <div class="compatibility-card good">
+                        <h3><span style="font-size: 1.5em;">(^▽^)/👍</span> 良い相性のタイプ</h3>
+                        <div class="compatibility-types">${typeData.Good.types.join(" ・ ")}</div>
+                        <div class="compatibility-reason">
+                            <p><strong>理由:</strong> ${typeData.Good.reason}</p>
+                        </div>
+                    </div>
+
+                    <div class="compatibility-card bad">
+                        <h3><span style="font-size: 1.5em;">(´;ω;｀)👎</span> 難しい/衝突しやすいタイプ</h3>
+                        <div class="compatibility-types">${typeData.Bad.types.join(" ・ ")}</div>
+                        <div class="compatibility-reason">
+                            <p><strong>理由:</strong> ${typeData.Bad.reason}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="backToResultBtn" class="submit-btn back-btn" type="button">
+                  診断結果に戻る
+                </button>
+                <button id="goToCharBtn" class="submit-btn" style="width: clamp(180px, 40%, 260px); margin-top: 15px;" type="button">
+                  キャラクターを見る
+                </button>
+            `;
+
+            quizArea.style.display = 'none';
+            compScreen.style.display = 'block';
+
+            document.getElementById('backToResultBtn').addEventListener('click', () => {
+                compScreen.style.display = 'none';
+                quizArea.style.display = 'block';
+                document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+            });
+            document.getElementById('goToCharBtn').addEventListener('click', () => {
+                showCharacterSelectionScreen(mbtiType);
+            });
+
+            compScreen.scrollIntoView({ behavior: 'smooth' });
+        }
+
+
+        // ▼ 【修正点２】作品選択画面を表示する関数を定義
+        function showCharacterSelectionScreen(mbtiType) {
+            const quizArea = document.getElementById('quiz-and-result-area');
+            const charScreen = document.getElementById('compatibility-screen'); // 既存のコンテナを再利用
+
+            charScreen.innerHTML = `
+                <h2>${mbtiType}タイプのアニメキャラクター</h2>
+                <p style="text-align: center; color: var(--ink-2); margin-bottom: 30px; font-weight: 600;">
+                    見たい作品を選んでください。
+                </p>
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 500px; margin: 0 auto;">
+                    <button class="series-btn" data-series="OP" style="width: 45%;">ONE PIECE</button>
+                    <button class="series-btn" data-series="CN" style="width: 45%;">名探偵コナン</button>
+                    <button class="series-btn" data-series="DM" style="width: 45%;">ドラえもん</button>
+                    <button class="series-btn" data-series="JB" style="width: 45%;">ジブリ</button>
+                    
+                </div>
+
+                <button id="backToResultBtn" class="submit-btn back-btn" type="button">
+                  診断結果に戻る
+                </button>
+            `;
+            
+            // 作品選択ボタンのイベントリスナー
+            charScreen.querySelectorAll('.series-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const seriesKey = e.target.dataset.series;
+                    showCharacterResult(mbtiType, seriesKey);
+                });
+            });
+
+            // スタイルを上書き
+            charScreen.querySelectorAll('.series-btn').forEach(btn => {
+                if (btn.dataset.series !== 'Default') {
+                    Object.assign(btn.style, {
+                        padding: '16px 10px',
+                        background: 'linear-gradient(135deg, var(--brand-1) 0%, var(--brand-2) 100%)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '999px',
+                        fontSize: '1.1rem',
+                        fontWeight: '800',
+                        cursor: 'pointer',
+                        boxShadow: '0 6px 16px rgba(236, 72, 153, .25)',
+                        transition: 'transform .12s ease'
+                    });
+                    btn.onmouseover = () => btn.style.transform = 'translateY(-2px)';
+                    btn.onmouseout = () => btn.style.transform = 'none';
+                }
+            });
+
+
+            document.getElementById('backToResultBtn').addEventListener('click', () => {
+                charScreen.style.display = 'none';
+                quizArea.style.display = 'block';
+                document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+            });
+
+            quizArea.style.display = 'none';
+            charScreen.style.display = 'block';
+            charScreen.scrollIntoView({ behavior: 'smooth' });
+        }
+
+
+        // ▼ キャラクターの画像結果を表示する関数
+        function showCharacterResult(mbtiType, seriesKey) {
+            const charScreen = document.getElementById('compatibility-screen');
+            const typeData = mbtiDescriptions[mbtiType];
+            const charData = typeData.characters[seriesKey] || { 
+                charName: "データなし", 
+                charImage: "https://placehold.co/150x150/9ca3af/fff?text=No%20Data",
+                charSeries: (seriesKey === 'OP' ? 'ONE PIECE' : seriesKey === 'CN' ? '名探偵コナン' : seriesKey === 'DM' ? 'ドラえもん' : seriesKey === 'JB' ? 'ジブリ' : '')
+
+
+
+            };
+
+            charScreen.innerHTML = `
+                <h2>${typeData.name} (${mbtiType}) のキャラクター</h2>
+                <p style="text-align: center; color: var(--ink-2); margin-bottom: 30px; font-weight: 600;">
+                    あなたが選んだ作品のキャラクターはこちらです。
+                </p>
+
+                <div style="text-align: center; padding: 30px; border-radius: var(--radius-lg); background: #fff0f6; border: 2px solid var(--brand-2); max-width: 400px; margin: 0 auto; box-shadow: var(--shadow-1);">
+                    <img src="${charData.charImage}" alt="${charData.charName}" 
+                         style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%; border: 4px solid var(--brand-1); box-shadow: var(--shadow-2); margin-bottom: 20px;">
+                    
+                    <p style="font-size: 1.4rem; font-weight: 900; color: var(--brand-1); margin: 0;">
+                        ${charData.charName}
+                    </p>
+                    <p style="font-size: 1.2rem; color: var(--ink-3); margin: 5px 0 0 0;">
+                        （作品名: ${charData.charSeries || (seriesKey === 'OP' ? 'ONE PIECE' : seriesKey === 'CN' ? '名探偵コナン' : seriesKey === 'DM' ? 'ドラえもん' : seriesKey === 'JB' ? 'ジブリ' : '')
+}）
+                    </p>
+                </div>
+                
+                <div style="text-align: center; margin-top: 40px;">
+                    <button id="backToSelectionBtn" class="submit-btn back-btn" type="button">
+                        作品選択に戻る
+                    </button>
+                    <button id="backToResultBtn" class="submit-btn back-btn" type="button" style="margin-top: 15px;">
+                        診断結果に戻る
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('backToSelectionBtn').addEventListener('click', () => {
+                showCharacterSelectionScreen(mbtiType);
+            });
+
+            document.getElementById('backToResultBtn').addEventListener('click', () => {
+                document.getElementById('compatibility-screen').style.display = 'none';
+                document.getElementById('quiz-and-result-area').style.display = 'block';
+                document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+            });
+            charScreen.scrollIntoView({ behavior: 'smooth' });
+        }
+    
+        
+        // ▼ MBTIの絵文字を背景にちりばめる関数
+        function generateMbtiPattern() {
+            // 「きゅるきゅる」な雰囲気に合う絵文字
+            const cuteEmojis = [
+                "💖", "✨", "🎀", "🌸",
+                "🧸", "⭐️", "🍬", "🍦",
+                "💘", "🦄", "👑", "🍭"
+            ];
+            const patternDiv = document.getElementById('mbtiPattern');
+            
+            // 既存のコンテンツをクリア
+            patternDiv.innerHTML = ''; 
+            
+            const containerWidth = window.innerWidth;
+            const containerHeight = window.innerHeight;
+            
+            // 画面のサイズに応じて配置する数を調整
+            const count = Math.min(60, Math.floor((containerWidth * containerHeight) / 30000)); 
+
+            for (let i = 0; i < count; i++) {
+                const emoji = cuteEmojis[Math.floor(Math.random() * cuteEmojis.length)];
+                const span = document.createElement('span');
+                span.textContent = emoji;
+                
+                // ランダムな位置と回転
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const rotation = Math.floor(Math.random() * 90) * (Math.random() > 0.5 ? 1 : -1); 
+                
+                span.style.left = `${x}%`;
+                span.style.top = `${y}%`;
+                span.style.setProperty('--r', `${rotation}deg`);
+                
+                patternDiv.appendChild(span);
+            }
+        }
+
+        // ページロード時とリサイズ時に実行
+        window.addEventListener('load', generateMbtiPattern);
+        window.addEventListener('resize', () => {
+             document.getElementById('mbtiPattern').innerHTML = '';
+             generateMbtiPattern();
+        });
+    </script>
+</body>
+</html>
